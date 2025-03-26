@@ -4,10 +4,7 @@ from tkinter import messagebox as msg
 "Trying to automate the task using selenium"
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support import expected_conditions as EC
-import pyautogui
 
 # Set up the WebDriver (Edge in this example)
 options = Options()
@@ -18,13 +15,20 @@ driver = webdriver.Chrome(options=options)
 # Navigate to the result portal
 driver.get("https://result.mdu.ac.in/postexam/result.aspx")
 
-student_details = []
+student_details = []   #List for storing the student details
 
 # Pause to ensure the page loads fully
 pyautogui.sleep(1)
-students_detail = [(2312051470,6071607,8076954807,"rajuyadav782760@gmail.com"),(2312051471,6071611,9115004409,"ritikyadav4409@gmail.com"),(2312051513,6071579,7982538645,"yadavnitin24821@gmail.com")]
 
-for Registration_No,Roll_no,Phone_No,Email_ID in students_detail:
+"Enter Your data Here 👇👇👇"
+students_detail = [
+    ("Registration No","Roll NO"),
+    (2312051573, 6071620)
+     ] 
+
+# This data 👆👆 is just an example enter your data properly or take Refferance view of the requirement.txt file which is also in this Repo.
+
+for Registration_No,Roll_no in students_detail:
     try:
 
         # Locate the Registration No and Roll No fields and enter the data
@@ -44,63 +48,51 @@ for Registration_No,Roll_no,Phone_No,Email_ID in students_detail:
 
         pyautogui.sleep(5)
 
-
-        student_name_element = driver.find_element(By.ID,"lblStudentName")
-        student_name = student_name_element.text
-        print(student_name)
+      
+        student_name = driver.find_element(By.ID,"lblStudentName").text
         pyautogui.sleep(1)
-        "Code for Printing the marksheet"
-
-        # print_button = driver.find_element(By.ID,"btnPrint")
-        # print_button.click()
-        # pyautogui.sleep(3)
-        # pyautogui.press('enter')
-        # print("button is pressed")
-
-        # pyautogui.moveTo(199,228)
-        # print("Mouse is moved to the cordination")
-        # pyautogui.click()
-        # print("Mouse is clicked")
-        # pyautogui.moveTo(199,235,0.3)
-        # print("Mouse is moved to the cordination")
-
-        # pyautogui.scroll(-200)
-        # pyautogui.press('enter')
-        # pyautogui.sleep(0.4)
-        # pyautogui.write(str(student_name))
-        # pyautogui.sleep(0.3)
-        # pyautogui.press('enter')
-
-        # driver.refresh()
 
         "Getting all data from the result window"
         father_name = driver.find_element(By.ID,"lblFatherName").text
-        print(father_name)
-        os_marks = driver.find_element(By.XPATH,"//table//tr[2]//td[8]").text
-        ds_marks = driver.find_element(By.XPATH,"//table//tr[3]//td[8]").text
-        database_marks = driver.find_element(By.XPATH,"//table//tr[4]//td[8]").text
-        comm_skill_marks = driver.find_element(By.XPATH,"//table//tr[5]//td[8]").text
-        sw_lab_marks = driver.find_element(By.XPATH,"//table//tr[6]//td[8]").text
+        # os_marks = driver.find_element(By.XPATH,"//table//tr[2]//td[8]").text   "Used for getting the data from the result Table"
+  
+        "Finding Total Marks"
+        total_marks = driver.find_element(By.ID,"rptMarks_ctl06_lblTotal").text
+        result = driver.find_element(By.ID,"lblresult").text
+        reappear = ""
+        if result == 'REP':
+            re = driver.find_element(By.ID,"labelreapr").text
+            reappear = reappear.join(re)
 
-        data = {"Operating System" : os_marks,
-                "Data Structure-I " : ds_marks,
-                "Database " : database_marks,
-                "Communication Skill" :comm_skill_marks,
-                "software Lab" : sw_lab_marks
-                }
+        data = {
+                "Name":student_name,
+                "Registraion No":Registration_No,
+                "Roll No ": Roll_no,
+                "Total Marks":total_marks,
+                "Re appear ": reappear 
+                    }
 
         student_details.append(data)
+        
         pyautogui.sleep(1)
         driver.refresh()
         pyautogui.sleep(2)
+
     except Exception as e:
         print(f"Error is occured In {Registration_No} and \nError is {e}")
+        msg.showerror("process Interupted","Unexpected Error: Please ensure good internet connect or try again")
 
 print(student_details)
+print()   # Giving Extra Space for better Representation
+print()
 
-pyautogui.sleep(20)
+"Representing Data in well format"
+print(f"{'Name':<22}: {'Total Marks':<13} {'Reappear ':^20}")
+for dictionary in student_details:
+    print(f"{dictionary['Name']:<22}: {dictionary['Total Marks']:<13}| {dictionary['Re appear ']:<20}")
 
+# Display info when process complete
+msg.showinfo("Success","All the data fatched successfully")
 
 # Close the browser
 driver.quit()
-
